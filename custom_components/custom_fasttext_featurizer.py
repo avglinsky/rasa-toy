@@ -39,7 +39,7 @@ BUFFER_SLOTS_PREFIX = "buf_"
 logger = logging.getLogger(__name__)
 
 
-class CountVectorsFeaturizer(SparseFeaturizer):
+class FasttextFeaturizer(SparseFeaturizer):
     """Creates a sequence of token counts features based on sklearn's `CountVectorizer`.
 
     All tokens which consist only of digits (e.g. 123 and 99
