@@ -711,15 +711,6 @@ class CountVectorsFeaturizer(SparseFeaturizer):
         construct a new count vectorizer using the sklearn framework.
         """
 
-        spacy_nlp = kwargs.get("spacy_nlp")
-        if spacy_nlp is not None:
-            # create spacy lemma_ for OOV_words
-            self.OOV_words = [
-                t.lemma_ if self.use_lemma else t.text
-                for w in self.OOV_words
-                for t in spacy_nlp(w)
-            ]
-
         # process sentences and collect data for all attributes
 
         processed_attribute_tokens = self._get_all_attributes_processed_tokens(
@@ -743,16 +734,70 @@ class CountVectorsFeaturizer(SparseFeaturizer):
         attribute_texts = self._convert_attribute_tokens_to_texts(
             processed_attribute_tokens
         )
+        '''
+        {'text': ['привет привет', 'здравствуйте здравствуйте', 'до свидания', 'пока пока', 'да да', 'конечно конечно',
+         'нет нет', 'не хочу', 'круто круто', 'все хорошо', 'мой день был ужасный', 'я опечален', 'ты бот', 'ты человек',
+          'я говорю с ботом', 'я говорю с человеком'], 
+          'intent': ['greet', 'greet', 'goodbye', 'goodbye', 'affirm', 'affirm', 'deny', 'deny', 'mood_great', 
+          'mood_great', 'mood_unhappy', 'mood_unhappy', 'bot_challenge', 'bot_challenge', 'bot_challenge', 'bot_challenge'], 
+          'response': ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], 
+          'action_name': ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], 
+          'action_text': ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], 
+          'intent_response_key': ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']}
+        '''
+
+
         if self.use_shared_vocab:
             self._train_with_shared_vocab(attribute_texts)
         else:
             self._train_with_independent_vocab(attribute_texts)
 
         # transform for all attributes
+        # self._attributes: ['text', 'intent', 'response', 'action_name', 'action_text', 'intent_response_key']
         for attribute in self._attributes:
             sequence_features, sentence_features = self._get_featurized_attribute(
                 attribute, processed_attribute_tokens[attribute]
             )
+            '''
+            для text:
+            sentence
+            [<1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 1 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 1 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 1 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 1 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 1 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 1 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 1 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 4 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 4 stored elements in COOrdinate format>, <1x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 4 stored elements in COOrdinate format>]
+	sequence
+	[<2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <4x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 4 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <2x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 2 stored elements in COOrdinate format>, <4x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 4 stored elements in COOrdinate format>, <4x1026 sparse matrix of type '<class 'numpy.int64'>'
+	with 4 stored elements in COOrdinate format>]
+            
+            '''
 
             if sequence_features and sentence_features:
                 self._set_attribute_features(
