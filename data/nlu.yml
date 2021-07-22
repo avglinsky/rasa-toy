@@ -1,0 +1,39 @@
+version: "2.0"
+
+nlu:
+- intent: greet
+  examples: |
+    - привет привет
+    - здравствуйте здравствуйте
+
+- intent: goodbye
+  examples: |
+    - до свидания
+    - пока пока
+
+- intent: affirm
+  examples: |
+    - да да
+    - конечно конечно
+
+- intent: deny
+  examples: |
+    - нет нет
+    - не хочу
+
+- intent: mood_great
+  examples: |
+    - круто круто
+    - все хорошо
+
+- intent: mood_unhappy
+  examples: |
+    - мой день был ужасный
+    - я опечален
+
+- intent: bot_challenge
+  examples: |
+    - ты бот?
+    - ты человек?
+    - я говорю с ботом?
+    - я говорю с человеком?
