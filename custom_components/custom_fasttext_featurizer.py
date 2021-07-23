@@ -34,6 +34,16 @@ from rasa.shared.nlu.training_data.message import Message
 from rasa.shared.nlu.training_data.training_data import TrainingData
 from sklearn.feature_extraction.text import CountVectorizer
 
+
+import compress_fasttext
+import numpy as np
+import pymorphy2
+morph = pymorphy2.MorphAnalyzer()
+
+use_normal_word_form = True
+delete_stopwords = False
+
+
 BUFFER_SLOTS_PREFIX = "buf_"
 
 logger = logging.getLogger(__name__)
@@ -619,8 +629,14 @@ class FasttextFeaturizer(SparseFeaturizer):
     ) -> Tuple[
         List[Optional[scipy.sparse.spmatrix]], List[Optional[scipy.sparse.spmatrix]]
     ]:
+
         if not self.vectorizers.get(attribute):
             return [None], [None]
+
+        '''
+
+        '''
+
 
         sequence_features = []
         sentence_features = []
@@ -747,10 +763,7 @@ class FasttextFeaturizer(SparseFeaturizer):
         '''
 
 
-        if self.use_shared_vocab:
-            self._train_with_shared_vocab(attribute_texts)
-        else:
-            self._train_with_independent_vocab(attribute_texts)
+
 
         # transform for all attributes
         # self._attributes: ['text', 'intent', 'response', 'action_name', 'action_text', 'intent_response_key']

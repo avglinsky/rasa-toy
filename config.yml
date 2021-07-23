@@ -14,15 +14,10 @@ pipeline:
     - name: custom_components.custom_whitespace_tokenizer.WhitespaceTokenizer
       case_sensitive: False
     - name: LexicalSyntacticFeaturizer
-#    - name: custom_components.custom_fasttext.FastTextFeaturizer
-#      cache_dir: pretrained_models
-#      file: ft_freqprune_400K_100K_pq_300.bin
-#      alias: ft_featurizer
-    - name: custom_components.custom_count_vectors_featurizer.CountVectorsFeaturizer
-#   - name: CountVectorsFeaturizer
-#     analyzer: char_wb
-#     min_ngram: 1
-#     max_ngram: 4
+    - name: custom_components.custom_ft.FastTextFeaturizer
+      cache_dir: pretrained_models
+      file: ft_freqprune_400K_100K_pq_300.bin
+      alias: ft_featurizer
     - name: custom_components.custom_diet_classifier.DIETClassifier
       epochs: 10
       constrain_similarities: true
